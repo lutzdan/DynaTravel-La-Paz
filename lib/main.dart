@@ -944,13 +944,13 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
                     Icon(
                       tag.icon,
                       color: tag.color,
-                      size: 24,
+                      size: 36,
                     ),
                     const SizedBox(height: 4),
                     Text(
                       tag.name,
                       style: TextStyle(
-                        fontSize: 10,
+                        fontSize: 1,
                         fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                         color: isSelected ? tag.color : LaPazTheme.charcoal,
                       ),
@@ -1327,17 +1327,17 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
   }
 
   Widget _buildFiltersSummary() {
-    final filters = <String>[];
-    if (selectedBudget != null) filters.add('Presupuesto: ${budgetTags.firstWhere((t) => t.id == selectedBudget).name}');
-    if (selectedTripDays != null) filters.add('Días: ${tripDaysTags.firstWhere((t) => t.id == selectedTripDays).name}');
-    if (selectedPace != null) filters.add('Ritmo: ${paceTags.firstWhere((t) => t.id == selectedPace).name}');
-    if (selectedSchedule != null) filters.add('Horario: ${scheduleTags.firstWhere((t) => t.id == selectedSchedule).name}');
-    if (selectedDuration != null) filters.add('Duración: ${durationTags.firstWhere((t) => t.id == selectedDuration).name}');
-    if (selectedTripType != null) filters.add('Viaje: ${tripTypeTags.firstWhere((t) => t.id == selectedTripType).name}');
-    if (selectedTransport != null) filters.add('Transporte: ${transportTags.firstWhere((t) => t.id == selectedTransport).name}');
-    if (selectedDistance != null) filters.add('Distancia: ${distanceTags.firstWhere((t) => t.id == selectedDistance).name}');
-    if (selectedAccessibility != null) filters.add('Accesibilidad: ${accessibilityTags.firstWhere((t) => t.id == selectedAccessibility).name}');
-    if (selectedAvailability != null) filters.add('Disponibilidad: ${availabilityTags.firstWhere((t) => t.id == selectedAvailability).name}');
+    final filters = <String, String>{};
+    if (selectedBudget != null) filters['Presupuesto'] = budgetTags.firstWhere((t) => t.id == selectedBudget).name;
+    if (selectedTripDays != null) filters['Días'] = tripDaysTags.firstWhere((t) => t.id == selectedTripDays).name;
+    if (selectedPace != null) filters['Ritmo'] = paceTags.firstWhere((t) => t.id == selectedPace).name;
+    if (selectedSchedule != null) filters['Horario'] = scheduleTags.firstWhere((t) => t.id == selectedSchedule).name;
+    if (selectedDuration != null) filters['Duración'] = durationTags.firstWhere((t) => t.id == selectedDuration).name;
+    if (selectedTripType != null) filters['Viaje'] = tripTypeTags.firstWhere((t) => t.id == selectedTripType).name;
+    if (selectedTransport != null) filters['Transporte'] = transportTags.firstWhere((t) => t.id == selectedTransport).name;
+    if (selectedDistance != null) filters['Distancia'] = distanceTags.firstWhere((t) => t.id == selectedDistance).name;
+    if (selectedAccessibility != null) filters['Accesibilidad'] = accessibilityTags.firstWhere((t) => t.id == selectedAccessibility).name;
+    if (selectedAvailability != null) filters['Disponibilidad'] = availabilityTags.firstWhere((t) => t.id == selectedAvailability).name;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -1375,7 +1375,7 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
               ),
             )
           else
-            ...filters.map((filter) => Padding(
+            ...filters.values.map((filter) => Padding(
               padding: const EdgeInsets.only(bottom: 4),
               child: Row(
                 children: [

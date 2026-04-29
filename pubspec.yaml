@@ -19,5 +19,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-  assets:
-    - assets/word2vec_tourism.json
+ # assets:
+  #  - assets/word2vec_tourism.json
