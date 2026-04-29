@@ -205,6 +205,7 @@ class ItineraryGenerator {
     final color = _colorMap[colorName] ?? LaPazTheme.oceanBlue;
     final name = place['name'] as String;
     final alts = _alternatives[name] ?? [];
+    final isSponsored = bool;
 
     return ItineraryItem(
       id: '${category}_${name.toLowerCase().replaceAll(' ', '_')}_${_random.nextInt(99999)}',
@@ -261,6 +262,8 @@ class ItineraryGenerator {
     final placeName = (place['name'] as String).toLowerCase();
     final placeDesc = (place['description'] as String).toLowerCase();
     final placeCategory = category.toLowerCase();
+
+    print(expandedTags);
 
     for (final tag in expandedTags) {
       final lowerTag = tag.toLowerCase();
@@ -347,6 +350,100 @@ class ItineraryGenerator {
     return base;
   }
 
+  ItineraryItem _createMealItem(String name, String category, String timeSlot, int duration, String budget) {
+    return ItineraryItem(
+      id: 'meal_${category}_${DateTime.now().millisecondsSinceEpoch}_${_random.nextInt(9999)}',
+      name: name,
+      category: category,
+      description: 'Hora de $name',
+      address: 'La Paz, B.C.S.',
+      relevanceScore: 0.0,
+      icon: Icons.restaurant,
+      color: LaPazTheme.coral,
+      timeSlot: timeSlot,
+      estimatedDurationMinutes: duration,
+      budgetLevel: budget,
+      latitude: 24.1445,
+      longitude: -110.3100,
+      alternativeNames: [],
+    );
+  }
+
+  int _getActivitiesPerSegment(String? pace) {
+    switch (pace) {
+      case 'relajado':
+        return 1;
+      case 'intenso':
+        return 3 + _random.nextInt(2);
+      default:
+        return 2 + _random.nextInt(2);
+    }
+  }
+
+  String _getTimeSlotForSegment(String segment, int index) {
+    switch (segment) {
+      case 'morning':
+        final times = ['9:30 AM', '10:30 AM', '11:30 AM', '12:00 PM'];
+        return times[index % times.length];
+      case 'afternoon':
+        final times = ['2:30 PM', '3:30 PM', '4:30 PM', '5:30 PM'];
+        return times[index % times.length];
+      case 'evening':
+        final times = ['8:30 PM', '9:30 PM', '10:30 PM'];
+        return times[index % times.length];
+      default:
+        return '12:00 PM';
+    }
+  }
+
+  List<String> _buildDayTemplate(String? pace, String? schedule) {
+    final template = <String>[];
+    final activitiesPerSegment = _getActivitiesPerSegment(pace);
+
+    final includeBreakfast = schedule == null || schedule == 'todo_el_dia' || schedule == 'mañana';
+    final includeLunch = schedule == null || schedule == 'todo_el_dia' || schedule == 'tarde';
+    final includeDinner = schedule == null || schedule == 'todo_el_dia' || schedule == 'noche';
+
+    if (includeBreakfast) {
+      template.add('breakfast');
+      for (int i = 0; i < activitiesPerSegment; i++) {
+        template.add('activity_morning');
+      }
+    }
+
+    if (includeLunch) {
+      template.add('lunch');
+      for (int i = 0; i < activitiesPerSegment; i++) {
+        template.add('activity_afternoon');
+      }
+    }
+
+    if (includeDinner) {
+      template.add('dinner');
+    }
+
+    return template;
+  }
+
+  String _getTimeSlotForTemplateItem(String templateItem, int index) {
+    switch (templateItem) {
+      case 'breakfast':
+        return '8:00 AM';
+      case 'lunch':
+        return '1:00 PM';
+      case 'dinner':
+        return '7:00 PM';
+      case 'activity_morning':
+        final times = ['9:30 AM', '10:30 AM', '11:30 AM', '12:00 PM'];
+        return times[index % times.length];
+      case 'activity_afternoon':
+        final times = ['2:30 PM', '3:30 PM', '4:30 PM', '5:30 PM'];
+        return times[index % times.length];
+      default:
+        return '12:00 PM';
+    }
+  }
+
   GeneratedItinerary generate({
     required List<String> mainInterests,
     required List<String> specificInterests,
@@ -383,30 +480,51 @@ class ItineraryGenerator {
 
     scoredPlaces.sort((a, b) => (b['score'] as double).compareTo(a['score'] as double));
 
-    final itemsPerDay = max(3, 6 - (pace == 'intenso' ? 0 : pace == 'relajado' ? 1 : 0));
-    final totalSlots = itemsPerDay * days;
+    final dayTemplate = _buildDayTemplate(pace, schedule);
+    final activitySlots = dayTemplate.where((item) => item.startsWith('activity')).length;
+    final totalActivitySlots = activitySlots * days;
 
-    final selectedPlaces = scoredPlaces.take(min(totalSlots, scoredPlaces.length)).toList();
+    final selectedPlaces = scoredPlaces.take(min(totalActivitySlots, scoredPlaces.length)).toList();
 
     final daysItinerary = <DayItinerary>[];
-    var itemIndex = 0;
+    var activityIndex = 0;
 
     for (int day = 0; day < days; day++) {
       final dayItems = <ItineraryItem>[];
-      final dayItemCount = min(itemsPerDay, selectedPlaces.length - itemIndex);
+      var morningActivityCount = 0;
+      var afternoonActivityCount = 0;
+      var sponsoredSet = false;
 
-      for (int i = 0; i < dayItemCount; i++) {
-        final data = selectedPlaces[itemIndex];
-        final place = data['place'] as Map<String, dynamic>;
-        final category = data['category'] as String;
-        final score = data['score'] as double;
+      for (int t = 0; t < dayTemplate.length; t++) {
+        final templateItem = dayTemplate[t];
 
-        final item = _createItemFromData(data, category, score);
-        item.timeSlot = _getTimeSlot(i, schedule);
-        item.estimatedDurationMinutes = _getDuration(place, pace);
-        dayItems.add(item);
+        if (templateItem == 'breakfast') {
+          dayItems.add(_createMealItem('Desayuno', 'gastronomia', '8:00 AM', 60, 'bajo'));
+        } else if (templateItem == 'lunch') {
+          dayItems.add(_createMealItem('Comida', 'gastronomia', '1:00 PM', 90, 'medio'));
+        } else if (templateItem == 'dinner') {
+          dayItems.add(_createMealItem('Cena', 'gastronomia', '7:00 PM', 90, 'medio'));
+        } else if (templateItem.startsWith('activity')) {
+          if (activityIndex < selectedPlaces.length) {
+            final data = selectedPlaces[activityIndex];
+            final place = data['place'] as Map<String, dynamic>;
+            final category = data['category'] as String;
+            final score = data['score'] as double;
 
-        itemIndex++;
+            final item = _createItemFromData(data, category, score);
+            item.timeSlot = _getTimeSlotForTemplateItem(templateItem, templateItem == 'activity_morning' ? morningActivityCount++ : afternoonActivityCount++);
+            item.estimatedDurationMinutes = _getDuration(place, pace);
+
+            if (!sponsoredSet) {
+              item.isSponsored = true;
+              sponsoredSet = true;
+            }
+
+            dayItems.add(item);
+
+            activityIndex++;
+          }
+        }
       }
 
       final today = DateTime.now().add(Duration(days: day));

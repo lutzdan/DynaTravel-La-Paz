@@ -101,6 +101,7 @@ class _ItineraryScreenState extends State<ItineraryScreen>
             child: Column(
               children: [
                 _buildDaySelector(itinerary),
+                _buildAdBanner(),
                 _buildDayContent(itinerary.days[_selectedDay]),
                 const SizedBox(height: 20),
               ],
@@ -309,6 +310,29 @@ class _ItineraryScreenState extends State<ItineraryScreen>
     );
   }
 
+  Widget _buildAdBanner() {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 12),
+      padding: const EdgeInsets.symmetric(vertical: 20),
+      decoration: BoxDecoration(
+        color: LaPazTheme.lightGray,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: LaPazTheme.darkGray.withOpacity(0.3)),
+      ),
+      child: const Center(
+        child: Text(
+          'ANUNCIO',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: LaPazTheme.darkGray,
+            letterSpacing: 2,
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildDayContent(DayItinerary day) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -468,13 +492,36 @@ class _ItineraryScreenState extends State<ItineraryScreen>
           Row(
             children: [
               Expanded(
-                child: Text(
-                  item.name,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: item.color,
-                  ),
+                child: Row(
+                  children: [
+                    Text(
+                      item.name,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: item.color,
+                      ),
+                    ),
+                    if (item.isSponsored) ...[
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: LaPazTheme.gold.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(color: LaPazTheme.gold, width: 1),
+                        ),
+                        child: const Text(
+                          'Patrocinado',
+                          style: TextStyle(
+                            fontSize: 9,
+                            fontWeight: FontWeight.bold,
+                            color: LaPazTheme.gold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ),
               Container(

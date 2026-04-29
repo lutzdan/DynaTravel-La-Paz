@@ -16,6 +16,7 @@ class ItineraryItem {
   final double latitude;
   final double longitude;
   final List<String> alternativeNames;
+  bool isSponsored;
 
   ItineraryItem({
     required this.id,
@@ -32,6 +33,7 @@ class ItineraryItem {
     this.latitude = 0.0,
     this.longitude = 0.0,
     this.alternativeNames = const [],
+    this.isSponsored = false,
   });
 
   ItineraryItem copyWith({
@@ -45,6 +47,7 @@ class ItineraryItem {
     String? timeSlot,
     int? estimatedDurationMinutes,
     String? budgetLevel,
+    bool? isSponsored,
   }) {
     return ItineraryItem(
       id: id,
@@ -61,6 +64,7 @@ class ItineraryItem {
       latitude: latitude,
       longitude: longitude,
       alternativeNames: alternativeNames,
+      isSponsored: isSponsored ?? this.isSponsored,
     );
   }
 }

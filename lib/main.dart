@@ -1053,8 +1053,8 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
           const SizedBox(height: 20),
           
           // Duration
-          _buildFilterSection('Duración', Icons.timer, durationTags, selectedDuration, (value) => setState(() => selectedDuration = value)),
-          const SizedBox(height: 20),
+          // _buildFilterSection('Duración', Icons.timer, durationTags, selectedDuration, (value) => setState(() => selectedDuration = value)),
+          // const SizedBox(height: 20),
           
           // Trip Type
           _buildFilterSection('Tipo de Viaje', Icons.group, tripTypeTags, selectedTripType, (value) => setState(() => selectedTripType = value)),
@@ -1065,16 +1065,16 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
           const SizedBox(height: 20),
           
           // Distance
-          _buildFilterSection('Distancia', Icons.near_me, distanceTags, selectedDistance, (value) => setState(() => selectedDistance = value)),
-          const SizedBox(height: 20),
+          // _buildFilterSection('Distancia', Icons.near_me, distanceTags, selectedDistance, (value) => setState(() => selectedDistance = value)),
+          // const SizedBox(height: 20),
           
-          // Accessibility
-          _buildFilterSection('Accesibilidad', Icons.accessible, accessibilityTags, selectedAccessibility, (value) => setState(() => selectedAccessibility = value)),
-          const SizedBox(height: 20),
+          // // Accessibility
+          // _buildFilterSection('Accesibilidad', Icons.accessible, accessibilityTags, selectedAccessibility, (value) => setState(() => selectedAccessibility = value)),
+          // const SizedBox(height: 20),
           
-          // Availability
-          _buildFilterSection('Disponibilidad', Icons.event, availabilityTags, selectedAvailability, (value) => setState(() => selectedAvailability = value)),
-          const SizedBox(height: 30),
+          // // Availability
+          // _buildFilterSection('Disponibilidad', Icons.event, availabilityTags, selectedAvailability, (value) => setState(() => selectedAvailability = value)),
+          // const SizedBox(height: 30),
           
           // Navigation Buttons
           _buildNavigationButtons(),
