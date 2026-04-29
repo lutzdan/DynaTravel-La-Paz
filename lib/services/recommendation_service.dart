@@ -1,7 +1,27 @@
 // lib/services/recommendation_service.dart
+import 'Word2VecServices.dart';
+
+class RankedPlace {
+  final Map<String, dynamic> place;
+  final String category;
+  final double jaccardScore;
+  final Set<String> placeTagSet;
+  final Set<String> userTagSet;
+
+  RankedPlace({
+    required this.place,
+    required this.category,
+    required this.jaccardScore,
+    required this.placeTagSet,
+    required this.userTagSet,
+  });
+}
 
 class RecommendationService {
   final Word2VecService _w2v;
+
+  RecommendationService(this._w2v);
+
 
   // Tags enriquecidos por categoría en el JSON
   static const Map<String, List<String>> categoryTags = {
@@ -61,9 +81,4 @@ class RecommendationService {
     results.sort((a, b) => b.jaccardScore.compareTo(a.jaccardScore));
     return results;
   }
-}
-
-class Word2VecService 
-{
-  
 }

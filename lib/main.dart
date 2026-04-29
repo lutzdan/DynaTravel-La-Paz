@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'services/word2vec_trainer.dart';
+import 'services/Word2VecServices.dart';
+import 'services/itinerary_generator.dart';
+import 'screens/itinerary_screen.dart';
 
 // ============================================
 // COLORS & THEME - La Paz Beach/Desert Style
@@ -249,6 +251,24 @@ class RecommendationScreen extends StatefulWidget {
 
 class _RecommendationScreenState extends State<RecommendationScreen> {
   int _currentStep = 0;
+  bool _isGenerating = false;
+  
+  final Word2VecService _w2v = Word2VecService();
+  late final ItineraryGenerator _itineraryGenerator;
+  
+  @override
+  void initState() {
+    super.initState();
+    _itineraryGenerator = ItineraryGenerator(_w2v);
+    _loadModel();
+  }
+  
+  Future<void> _loadModel() async {
+    try {
+      await _w2v.loadModel();
+    } catch (_) {
+    }
+  }
   
   // Selected tags
   Set<String> selectedMainInterests = {};
@@ -1212,14 +1232,7 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
           
           // Generate Button
           ElevatedButton(
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Generando itinerario personalizado...'),
-                  backgroundColor: LaPazTheme.oceanBlue,
-                ),
-              );
-            },
+            onPressed: _isGenerating ? null : _generateItinerary,
             style: ElevatedButton.styleFrom(
               backgroundColor: LaPazTheme.natureGreen,
               foregroundColor: LaPazTheme.white,
@@ -1228,20 +1241,29 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
                 borderRadius: BorderRadius.circular(16),
               ),
             ),
-            child: const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.auto_awesome, size: 24),
-                SizedBox(width: 8),
-                Text(
-                  'Generar Itinerario',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+            child: _isGenerating
+                ? const SizedBox(
+                    height: 24,
+                    width: 24,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 3,
+                      valueColor: AlwaysStoppedAnimation<Color>(LaPazTheme.white),
+                    ),
+                  )
+                : const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.auto_awesome, size: 24),
+                      SizedBox(width: 8),
+                      Text(
+                        'Generar Itinerario',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ),
           ),
           const SizedBox(height: 16),
           
@@ -1493,6 +1515,50 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
       setState(() {
         _currentStep--;
       });
+    }
+  }
+
+  Future<void> _generateItinerary() async {
+    setState(() {
+      _isGenerating = true;
+    });
+
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    final days = selectedTripDays != null ? int.tryParse(selectedTripDays!) ?? 3 : 3;
+
+    final itinerary = _itineraryGenerator.generate(
+      mainInterests: selectedMainInterests.toList(),
+      specificInterests: selectedSpecificInterests.toList(),
+      days: days,
+      budget: selectedBudget,
+      pace: selectedPace,
+      schedule: selectedSchedule,
+      tripType: selectedTripType,
+      transport: selectedTransport,
+    );
+
+    if (mounted) {
+      setState(() {
+        _isGenerating = false;
+      });
+
+      Navigator.push(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              ItineraryScreen(itinerary: itinerary),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            const begin = Offset(1.0, 0.0);
+            const end = Offset.zero;
+            const curve = Curves.easeInOutCubic;
+            var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+            var offsetAnimation = animation.drive(tween);
+            return SlideTransition(position: offsetAnimation, child: child);
+          },
+          transitionDuration: const Duration(milliseconds: 500),
+        ),
+      );
     }
   }
 }

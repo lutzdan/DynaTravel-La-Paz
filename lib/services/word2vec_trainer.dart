@@ -2,7 +2,6 @@
 import 'dart:io';
 import 'dart:convert';
 import 'dart:math';
-import 'package:vector_math/vector_math.dart';
 import 'package:ml_linalg/vector.dart' as ml;
 import 'tag_normalizer.dart';
 

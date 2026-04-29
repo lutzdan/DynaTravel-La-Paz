@@ -1,17 +1,13 @@
 // services/advanced_word2vec.dart
 import 'tag_normalizer.dart';
 import 'word2vec_trainer.dart';
-import 'package:vector_math/vector_math.dart';
 import 'package:ml_linalg/vector.dart' as ml;
-import 'dart:math';
 
 class AdvancedWord2Vec {
   final Map<String, List<double>> _embeddings;
-  final String _modelPath;
 
   AdvancedWord2Vec({String modelPath = 'assets/word2vec_tourism.json'})
-    : _modelPath = modelPath,
-      _embeddings = Word2VecTrainer.loadModel(modelPath);
+    : _embeddings = Word2VecTrainer.loadModel(modelPath);
 
   List<double> getEmbedding(String word) {
     // Normalizar primero
