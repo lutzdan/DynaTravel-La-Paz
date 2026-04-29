@@ -1,48 +1,34 @@
 import 'package:flutter/material.dart';
 
 // ============================================
-// PALETA DE COLORES — La Paz Naturaleza
+// COLORS & THEME - La Paz Beach/Desert Style
 // ============================================
 
-class AppColors {
-  static const Color sandy = Color(0xFFFFE6A7); // arena dorada
-  static const Color brown = Color(0xFFA6762E); // tierra/madera
-  static const Color taupe = Color(0xFF99806A); // arena oscura
-  static const Color olive = Color(0xFF5F6332); // verde olivo
-  static const Color lime = Color(0xFFC2C344); // verde lima
-  static const Color sky = Color(0xFFA0CFFF); // azul cielo/mar
-  static const Color cream = Color(0xFFFFF8EC); // crema/fondo
-  static const Color darkText = Color(0xFF3A2E1F); // texto oscuro
-  static const Color midText = Color(0xFF6B5744); // texto medio
-  static const Color ocean = Color(0xFF4A8FA8); // azul oceano profundo
-  static const Color sunset = Color(0xFFE8A050); // naranja atardecer
-}
-
 class LaPazTheme {
-  // Using AppColors palette
-  static const Color oceanBlue = AppColors.ocean;
-  static const Color seaGreen = AppColors.sky;
-  static const Color sand = AppColors.sandy;
-  static const Color desertSand = AppColors.taupe;
-  static const Color sunsetOrange = AppColors.sunset;
-  static const Color coral = AppColors.sunset;
+  // Primary Colors - Ocean & Desert
+  static const Color oceanBlue = Color(0xFF0077B6);
+  static const Color seaGreen = Color(0xFF00B4D8);
+  static const Color sand = Color(0xFFF4E4C1);
+  static const Color desertSand = Color(0xFFDEB887);
+  static const Color sunsetOrange = Color(0xFFE07A5F);
+  static const Color coral = Color(0xFFF77F00);
   
   // Nature & Sustainability
-  static const Color natureGreen = AppColors.olive;
-  static const Color forestGreen = AppColors.olive;
-  static const Color sage = AppColors.lime;
-  static const Color mint = AppColors.sandy;
+  static const Color natureGreen = Color(0xFF2D6A4F);
+  static const Color forestGreen = Color(0xFF40916C);
+  static const Color sage = Color(0xFF95D5B2);
+  static const Color mint = Color(0xFFB7E4C7);
   
   // Neutral Colors
   static const Color white = Color(0xFFFFFFFF);
-  static const Color offWhite = AppColors.cream;
+  static const Color offWhite = Color(0xFFF8F9FA);
   static const Color lightGray = Color(0xFFE9ECEF);
-  static const Color darkGray = AppColors.midText;
-  static const Color charcoal = AppColors.darkText;
+  static const Color darkGray = Color(0xFF495057);
+  static const Color charcoal = Color(0xFF212529);
   
   // Accent Colors
-  static const Color gold = AppColors.brown;
-  static const Color turquoise = AppColors.sky;
+  static const Color gold = Color(0xFFD4A373);
+  static const Color turquoise = Color(0xFF48CAE4);
   
   static ThemeData get theme => ThemeData(
     useMaterial3: true,
@@ -308,99 +294,78 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
     );
   }
 
-  // ============================================
-  // HERO BANNER - Custom Paint Widgets
-  // ============================================
-  
   Widget _buildAppBar() {
-    return SizedBox(
-      height: 180,
-      child: Stack(
-        fit: StackFit.expand,
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            LaPazTheme.oceanBlue,
+            LaPazTheme.seaGreen,
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
         children: [
-          // Gradiente cielo → mar → tierra
+          // Logo/Icon
           Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                stops: [0.0, 0.45, 1.0],
-                colors: [
-                  Color(0xFF7BBDD4), // cielo azul
-                  Color(0xFF4A8FA8), // océano
-                  Color(0xFF5F6332), // tierra/dunas
-                ],
-              ),
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: LaPazTheme.white.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(
+              Icons.explore,
+              color: LaPazTheme.white,
+              size: 28,
             ),
           ),
-          // Sol del desierto
-          Positioned(top: 24, right: 32, child: _SunWidget()),
-          // Silueta de palmas/dunas
-          Positioned(
-            bottom: 40,
-            left: 0,
-            right: 0,
-            child: CustomPaint(
-              painter: _DunesPainter(),
-              size: const Size(double.infinity, 70),
-            ),
-          ),
-          // Ola blanca de separación
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: CustomPaint(
-              painter: _WaveSeparatorPainter(),
-              size: const Size(double.infinity, 48),
-            ),
-          ),
-          // Tagline y step indicator
-          Positioned(
-            bottom: 56,
-            left: 20,
-            right: 80,
+          const SizedBox(width: 12),
+          // Title
+          const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Baja California Sur',
+                  'DynaTravel',
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.7),
-                    fontSize: 11,
-                    letterSpacing: 2,
-                    fontWeight: FontWeight.w500,
+                    color: LaPazTheme.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                const Text(
-                  'La Paz',
+                Text(
+                  'La Paz, B.C.S.',
                   style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: -0.5,
+                    color: LaPazTheme.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w300,
                   ),
                 ),
               ],
             ),
           ),
-          // Step indicator
-          Positioned(
-            top: 16,
-            right: 16,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                '${_currentStep + 1}/5',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12,
-                ),
+          // Step indicator text
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: LaPazTheme.white.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text(
+              '${_currentStep + 1}/5',
+              style: const TextStyle(
+                color: LaPazTheme.white,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),
@@ -408,110 +373,7 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
       ),
     );
   }
-}
 
-// ============================================
-// CUSTOM PAINTERS FOR HERO BANNER
-// ============================================
-
-class _SunWidget extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 48,
-      height: 48,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: RadialGradient(
-          colors: [
-            Colors.white.withValues(alpha: 0.9),
-            const Color(0xFFE8A050),
-          ],
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.orange.withValues(alpha: 0.4),
-            blurRadius: 20,
-            spreadRadius: 8,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _DunesPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = const Color(0xFF5F6332).withValues(alpha: 0.8)
-      ..style = PaintingStyle.fill;
-
-    final path = Path();
-    path.moveTo(0, size.height * 0.6);
-    
-    // Create dune curves
-    path.quadraticBezierTo(
-      size.width * 0.15, size.height * 0.2,
-      size.width * 0.3, size.height * 0.5,
-    );
-    path.quadraticBezierTo(
-      size.width * 0.45, size.height * 0.8,
-      size.width * 0.6, size.height * 0.4,
-    );
-    path.quadraticBezierTo(
-      size.width * 0.75, size.height * 0.0,
-      size.width * 0.9, size.height * 0.5,
-    );
-    path.quadraticBezierTo(
-      size.width * 1.0, size.height * 1.0,
-      size.width, size.height * 0.6,
-    );
-    
-    path.lineTo(size.width, size.height);
-    path.lineTo(0, size.height);
-    path.close();
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-class _WaveSeparatorPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.fill;
-
-    final path = Path();
-    path.moveTo(0, size.height * 0.5);
-    
-    // Create wave pattern
-    for (double i = 0; i <= size.width; i += 20) {
-      path.quadraticBezierTo(
-        i + 10, size.height * 0.2,
-        i + 20, size.height * 0.5,
-      );
-    }
-    
-    path.lineTo(size.width, size.height);
-    path.lineTo(0, size.height);
-    path.close();
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-  // ============================================
-  // PROGRESS INDICATOR
-  // ============================================
-  
   Widget _buildProgressIndicator() {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -860,7 +722,7 @@ class _WaveSeparatorPainter extends CustomPainter {
               Text(
                 'Selecciona tus intereses principales',
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: 20,
                   color: LaPazTheme.darkGray.withOpacity(0.8),
                 ),
               ),
@@ -870,7 +732,7 @@ class _WaveSeparatorPainter extends CustomPainter {
         // Tags Grid
         Expanded(
           child: GridView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 2),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
               childAspectRatio: 0.85,
@@ -926,7 +788,7 @@ class _WaveSeparatorPainter extends CustomPainter {
             // Content
             Center(
               child: Padding(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(3),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -948,7 +810,7 @@ class _WaveSeparatorPainter extends CustomPainter {
                     Text(
                       tag.name,
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 20,
                         fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                         color: isSelected ? tag.color : LaPazTheme.charcoal,
                       ),
