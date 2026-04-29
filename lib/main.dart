@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'services/word2vec_trainer.dart';
 
 // ============================================
 // COLORS & THEME - La Paz Beach/Desert Style
@@ -734,7 +735,7 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
           child: GridView.builder(
             padding: const EdgeInsets.symmetric(horizontal: 2),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
+              crossAxisCount: 7,
               childAspectRatio: 0.85,
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
@@ -866,11 +867,11 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
                   color: LaPazTheme.charcoal,
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 3),
               Text(
                 '¿Qué actividades te gustaría hacer?',
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: 18,
                   color: LaPazTheme.darkGray.withOpacity(0.8),
                 ),
               ),
@@ -880,9 +881,9 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
         // Tags Grid
         Expanded(
           child: GridView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 0),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4,
+              crossAxisCount: 7,
               childAspectRatio: 0.85,
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
