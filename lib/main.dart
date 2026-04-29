@@ -1547,7 +1547,14 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
         context,
         PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) =>
-              ItineraryScreen(itinerary: itinerary),
+              ItineraryScreen(
+                itinerary: itinerary,
+                generator: _itineraryGenerator,
+                userInterests: [...selectedMainInterests, ...selectedSpecificInterests],
+                budget: selectedBudget,
+                pace: selectedPace,
+                schedule: selectedSchedule,
+              ),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             const begin = Offset(1.0, 0.0);
             const end = Offset.zero;

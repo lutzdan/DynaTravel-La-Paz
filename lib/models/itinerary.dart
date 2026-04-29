@@ -2,18 +2,23 @@
 import 'package:flutter/material.dart';
 
 class ItineraryItem {
-  final String name;
-  final String category;
-  final String description;
-  final String address;
-  final double relevanceScore;
-  final IconData icon;
-  final Color color;
-  final String timeSlot;
-  final int estimatedDurationMinutes;
-  final String budgetLevel;
+  final String id;
+  String name;
+  String category;
+  String description;
+  String address;
+  double relevanceScore;
+  IconData icon;
+  Color color;
+  String timeSlot;
+  int estimatedDurationMinutes;
+  String budgetLevel;
+  final double latitude;
+  final double longitude;
+  final List<String> alternativeNames;
 
   ItineraryItem({
+    required this.id,
     required this.name,
     required this.category,
     required this.description,
@@ -24,14 +29,47 @@ class ItineraryItem {
     required this.timeSlot,
     this.estimatedDurationMinutes = 60,
     this.budgetLevel = 'medio',
+    this.latitude = 0.0,
+    this.longitude = 0.0,
+    this.alternativeNames = const [],
   });
+
+  ItineraryItem copyWith({
+    String? name,
+    String? category,
+    String? description,
+    String? address,
+    double? relevanceScore,
+    IconData? icon,
+    Color? color,
+    String? timeSlot,
+    int? estimatedDurationMinutes,
+    String? budgetLevel,
+  }) {
+    return ItineraryItem(
+      id: id,
+      name: name ?? this.name,
+      category: category ?? this.category,
+      description: description ?? this.description,
+      address: address ?? this.address,
+      relevanceScore: relevanceScore ?? this.relevanceScore,
+      icon: icon ?? this.icon,
+      color: color ?? this.color,
+      timeSlot: timeSlot ?? this.timeSlot,
+      estimatedDurationMinutes: estimatedDurationMinutes ?? this.estimatedDurationMinutes,
+      budgetLevel: budgetLevel ?? this.budgetLevel,
+      latitude: latitude,
+      longitude: longitude,
+      alternativeNames: alternativeNames,
+    );
+  }
 }
 
 class DayItinerary {
   final int dayNumber;
   final String date;
-  final String theme;
-  final List<ItineraryItem> items;
+  String theme;
+  List<ItineraryItem> items;
 
   DayItinerary({
     required this.dayNumber,

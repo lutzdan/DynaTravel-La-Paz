@@ -1,12 +1,27 @@
 // lib/screens/itinerary_screen.dart
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../models/itinerary.dart';
 import '../services/itinerary_generator.dart';
+import 'itinerary_editor_screen.dart';
 
 class ItineraryScreen extends StatefulWidget {
   final GeneratedItinerary itinerary;
+  final ItineraryGenerator generator;
+  final List<String> userInterests;
+  final String? budget;
+  final String? pace;
+  final String? schedule;
 
-  const ItineraryScreen({super.key, required this.itinerary});
+  const ItineraryScreen({
+    super.key,
+    required this.itinerary,
+    required this.generator,
+    required this.userInterests,
+    this.budget,
+    this.pace,
+    this.schedule,
+  });
 
   @override
   State<ItineraryScreen> createState() => _ItineraryScreenState();
@@ -31,6 +46,47 @@ class _ItineraryScreenState extends State<ItineraryScreen>
   void dispose() {
     _animationController.dispose();
     super.dispose();
+  }
+
+  void _openGoogleMaps(ItineraryItem item) async {
+    final lat = item.latitude;
+    final lng = item.longitude;
+    final name = Uri.encodeComponent(item.name);
+    final url = Uri.parse('https://www.google.com/maps/search/?api=1&query=$lat,$lng&query_place_id=$name');
+
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } else {
+      final fallbackUrl = Uri.parse('https://www.google.com/maps?q=$lat,$lng($name)');
+      if (await canLaunchUrl(fallbackUrl)) {
+        await launchUrl(fallbackUrl, mode: LaunchMode.externalApplication);
+      }
+    }
+  }
+
+  void _navigateToEditor() {
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => ItineraryEditorScreen(
+          itinerary: widget.itinerary,
+          generator: widget.generator,
+          userInterests: widget.userInterests,
+          budget: widget.budget,
+          pace: widget.pace,
+          schedule: widget.schedule,
+        ),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = Offset(1.0, 0.0);
+          const end = Offset.zero;
+          const curve = Curves.easeInOutCubic;
+          var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+          var offsetAnimation = animation.drive(tween);
+          return SlideTransition(position: offsetAnimation, child: child);
+        },
+        transitionDuration: const Duration(milliseconds: 500),
+      ),
+    );
   }
 
   @override
@@ -59,6 +115,21 @@ class _ItineraryScreenState extends State<ItineraryScreen>
     return SliverAppBar(
       expandedHeight: 200,
       pinned: true,
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back),
+        onPressed: () => Navigator.pop(context),
+      ),
+      actions: [
+        TextButton.icon(
+          onPressed: () => _navigateToEditor(),
+          icon: const Icon(Icons.edit, color: LaPazTheme.white),
+          label: const Text(
+            'Editar',
+            style: TextStyle(color: LaPazTheme.white, fontWeight: FontWeight.bold),
+          ),
+        ),
+        const SizedBox(width: 8),
+      ],
       flexibleSpace: FlexibleSpaceBar(
         background: Container(
           decoration: BoxDecoration(
@@ -452,6 +523,23 @@ class _ItineraryScreenState extends State<ItineraryScreen>
                 color: _getBudgetColor(item.budgetLevel),
               ),
             ],
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: () => _openGoogleMaps(item),
+              icon: const Icon(Icons.map, size: 18),
+              label: const Text('Ver en Google Maps'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: LaPazTheme.oceanBlue,
+                side: const BorderSide(color: LaPazTheme.oceanBlue),
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
           ),
         ],
       ),
