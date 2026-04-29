@@ -137,7 +137,7 @@ final List<TagData> specificInterests = [
 
 // Filter Tags - Budget
 final List<TagData> budgetTags = [
-  TagData(id: 'gratis', name: 'Gratis', icon: Icons.money_off, color: LaPazTheme.forestGreen),
+  TagData(id: 'gratis', name: 'Minimo', icon: Icons.money_off, color: LaPazTheme.forestGreen),
   TagData(id: 'bajo', name: 'Bajo', icon: Icons.attach_money, color: LaPazTheme.sage),
   TagData(id: 'medio', name: 'Medio', icon: Icons.money, color: LaPazTheme.gold),
   TagData(id: 'alto', name: 'Alto', icon: Icons.paid, color: LaPazTheme.sunsetOrange),
@@ -970,7 +970,7 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
                     Text(
                       tag.name,
                       style: TextStyle(
-                        fontSize: 1,
+                        fontSize: 20,
                         fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                         color: isSelected ? tag.color : LaPazTheme.charcoal,
                       ),
