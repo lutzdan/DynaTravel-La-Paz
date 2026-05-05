@@ -198,6 +198,24 @@ class ItineraryGenerator {
     'Experiencias Únicas',
   ];
 
+  static const Map<String, List<String>> _categoryTags = {
+    'playas': ['playa', 'mar', 'arena', 'sol', 'natacion', 'relajacion', 'agua'],
+    'ecoturismo': ['naturaleza', 'aventura', 'senderismo', 'fauna', 'flora', 'ecoturismo', 'conservacion'],
+    'cultura': ['cultura', 'historia', 'arte', 'aprendizaje', 'educacion', 'museo', 'arquitectura'],
+    'gastronomia': ['comida', 'gastronomia', 'sabor', 'mariscos', 'local', 'restaurante', 'culinario'],
+    'aventura': ['aventura', 'deporte', 'adrenalina', 'exploracion', 'buceo', 'snorkel', 'kayak'],
+    'vida_nocturna': ['noche', 'vida_nocturna', 'musica', 'bar', 'terraza', 'entretenimiento'],
+    'compras': ['compras', 'artesania', 'souvenir', 'tienda', 'mercado', 'local'],
+    'relajacion': ['relajacion', 'spa', 'bienestar', 'yoga', 'paz', 'tranquilidad'],
+    'historia': ['historia', 'colonial', 'mision', 'antiguo', 'patrimonio', 'arquitectura'],
+  };
+
+  double _jaccardSimilarity(Set<String> a, Set<String> b) {
+    final intersection = a.intersection(b).length;
+    final union = a.union(b).length;
+    return union == 0 ? 0.0 : intersection / union;
+  }
+
   ItineraryItem _createItemFromData(Map<String, dynamic> data, String category, double score) {
     final place = data['place'] as Map<String, dynamic>;
     final icon = _categoryIcons[category] ?? Icons.location_on;
@@ -257,26 +275,21 @@ class ItineraryGenerator {
     String? budget,
     String? pace,
   ) {
-    double score = 0.0;
+    final userTagSet = expandedTags.map((t) => t.toLowerCase()).toSet();
+    final categoryTagList = _categoryTags[category] ?? [];
+    final placeTagSet = {...categoryTagList.map((t) => t.toLowerCase()), category.toLowerCase()};
+
+    final jaccardScore = _jaccardSimilarity(userTagSet, placeTagSet);
+
+    double score = jaccardScore * 5.0;
 
     final placeName = (place['name'] as String).toLowerCase();
     final placeDesc = (place['description'] as String).toLowerCase();
-    final placeCategory = category.toLowerCase();
-
-    print(expandedTags);
 
     for (final tag in expandedTags) {
       final lowerTag = tag.toLowerCase();
-      if (placeName.contains(lowerTag)) score += 2.0;
-      if (placeDesc.contains(lowerTag)) score += 1.0;
-      if (placeCategory.contains(lowerTag)) score += 1.5;
-    }
-
-    for (final tag in expandedTags) {
-      try {
-        final sim = w2v.similarity(tag, placeName.split(' ').first);
-        score += sim * 0.5;
-      } catch (_) {}
+      if (placeName.contains(lowerTag)) score += 1.0;
+      if (placeDesc.contains(lowerTag)) score += 0.5;
     }
 
     if (budget != null) {

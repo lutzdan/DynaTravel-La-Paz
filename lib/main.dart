@@ -1061,8 +1061,8 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
           const SizedBox(height: 20),
           
           // Transport
-          _buildFilterSection('Transporte', Icons.directions_car, transportTags, selectedTransport, (value) => setState(() => selectedTransport = value)),
-          const SizedBox(height: 20),
+          // _buildFilterSection('Transporte', Icons.directions_car, transportTags, selectedTransport, (value) => setState(() => selectedTransport = value)),
+          // const SizedBox(height: 20),
           
           // Distance
           // _buildFilterSection('Distancia', Icons.near_me, distanceTags, selectedDistance, (value) => setState(() => selectedDistance = value)),
